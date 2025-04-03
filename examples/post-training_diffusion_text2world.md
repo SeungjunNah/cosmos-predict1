@@ -85,6 +85,20 @@ torchrun --nproc_per_node=8 -m cosmos_predict1.diffusion.training.train \
     -- experiment=text2world_7b_example_cosmos_nemo_assets
 ```
 
+Here's an example running log on a single node (8 x H100 GPUs).
+```bash
+[04-03 09:04:40|INFO|cosmos_predict1/utils/trainer.py:144:train] Starting training...
+[04-03 09:07:39|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 20 : iter_speed 7.82 seconds per iteration | Loss: 1.8906
+[04-03 09:08:58|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 30 : iter_speed 7.93 seconds per iteration | Loss: 3.2656
+[04-03 09:10:16|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 40 : iter_speed 7.81 seconds per iteration | Loss: 1.7812
+[04-03 09:11:35|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 50 : iter_speed 7.91 seconds per iteration | Loss: 0.3477
+[04-03 09:12:54|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 60 : iter_speed 7.90 seconds per iteration | Loss: -0.4023
+[04-03 09:14:14|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 70 : iter_speed 7.91 seconds per iteration | Loss: -0.4414
+[04-03 09:15:35|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 80 : iter_speed 8.15 seconds per iteration | Loss: -1.1172
+[04-03 09:16:52|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 90 : iter_speed 7.72 seconds per iteration | Loss: 0.1377 
+Training:   5%|████▉                                                                                                   | 94/2000 [12:44<4:10:00,  7.87s/it]
+```
+
 Optionally, multi-node training can be done with
 ```bash
 # 4-node training example.
@@ -92,6 +106,20 @@ torchrun --nproc_per_node=8 --nnodes=4 --rdzv_id 123 --rdzv_backend c10d --rdzv_
     -m cosmos_predict1.diffusion.training.train \
     --config=cosmos_predict1/diffusion/training/config/config.py \
     -- experiment=text2world_7b_example_cosmos_nemo_assets
+```
+
+Here's an example running log on 4 nodes (8 x H100 GPUs x 4 nodes).
+```bash
+[04-03 09:54:04|INFO|cosmos_predict1/utils/trainer.py:144:train] Starting training...
+[04-03 09:56:39|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 20 : iter_speed 6.85 seconds per iteration | Loss: 1.8672
+[04-03 09:57:47|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 30 : iter_speed 6.79 seconds per iteration | Loss: 2.5000
+[04-03 09:58:56|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 40 : iter_speed 6.86 seconds per iteration | Loss: 1.3281
+[04-03 10:00:04|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 50 : iter_speed 6.85 seconds per iteration | Loss: -0.1289
+[04-03 10:01:12|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 60 : iter_speed 6.82 seconds per iteration | Loss: -0.9336
+[04-03 10:02:21|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 70 : iter_speed 6.83 seconds per iteration | Loss: -1.0000
+[04-03 10:03:30|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 80 : iter_speed 6.91 seconds per iteration | Loss: -1.3359
+[04-03 10:04:38|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 90 : iter_speed 6.87 seconds per iteration | Loss: -0.4297
+Training:   5%|████▊                                                                                                   | 92/2000 [10:48<3:38:34,  6.87s/it]
 ```
 
 
@@ -151,6 +179,34 @@ checkpoints/posttraining/diffusion_text2world/text2world_7b_example_cosmos_nemo_
 ├── iter_{NUMBER}_ema_model.pt
 ```
 
+* (Optional) Low-resolution training 
+
+3. Download the Cosmos Tokenize model weights from [Hugging Face](https://huggingface.co/collections/nvidia/cosmos-predict1-67c9d1b97678dbf7669c89a7):
+```bash
+python3 -m scripts.download_tokenizer_checkpoints --tokenizer_types CV4x8x8-360p
+```
+
+Run the following command to execute an example post-training job with `cosmos_nemo_assets` data at 384x384 resolution.
+```bash
+export OUTPUT_ROOT=checkpoints # default value
+torchrun --nproc_per_node=8 -m cosmos_predict1.diffusion.training.train \
+    --config=cosmos_predict1/diffusion/training/config/config.py \
+    -- experiment=text2world_7b_example_cosmos_nemo_assets_lowres
+```
+
+Here's an example running log on a single node (8 x H100 GPUs).
+```bash
+[04-03 09:41:50|INFO|cosmos_predict1/utils/trainer.py:144:train] Starting training...
+[04-03 09:43:11|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 20 : iter_speed 2.89 seconds per iteration | Loss: 2.3906
+[04-03 09:43:39|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 30 : iter_speed 2.76 seconds per iteration | Loss: 3.9688
+[04-03 09:44:07|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 40 : iter_speed 2.85 seconds per iteration | Loss: 2.3281
+[04-03 09:44:36|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 50 : iter_speed 2.84 seconds per iteration | Loss: 0.3906
+[04-03 09:45:04|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 60 : iter_speed 2.85 seconds per iteration | Loss: -0.3418
+[04-03 09:45:32|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 70 : iter_speed 2.78 seconds per iteration | Loss: -0.3086
+[04-03 09:46:00|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 80 : iter_speed 2.82 seconds per iteration | Loss: -1.1641
+[04-03 09:46:28|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 90 : iter_speed 2.80 seconds per iteration | Loss: 0.7461
+Training:   5%|████▋                                                                                                   | 91/2000 [04:40<1:31:22,  2.87s/it]
+```
 
 ##### Cosmos-Predict1-14B-Text2World
 
