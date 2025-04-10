@@ -122,6 +122,8 @@ Here's an example running log on 4 nodes (8 x H100 GPUs x 4 nodes).
 Training:   5%|████▊                                                                                                   | 92/2000 [10:48<3:38:34,  6.87s/it]
 ```
 
+Example loss curve:  
+![Image](../assets/diffusion/loss_examples/text2world_7b_example_cosmos_nemo_assets.svg)
 
 The model will be post-trained using the above cosmos_nemo_assets dataset.
 See the config `text2world_7b_example_cosmos_nemo_assets` defined in `cosmos_predict1/diffusion/training/config/text2world/experiment.py` to understand how the dataloader is determined.
@@ -181,31 +183,31 @@ checkpoints/posttraining/diffusion_text2world/text2world_7b_example_cosmos_nemo_
 
 * (Optional) Low-resolution training 
 
-3. Download the Cosmos Tokenize model weights from [Hugging Face](https://huggingface.co/collections/nvidia/cosmos-predict1-67c9d1b97678dbf7669c89a7):
-```bash
-python3 -m scripts.download_tokenizer_checkpoints --tokenizer_types CV4x8x8-360p
-```
+To run with 4 GPUs with H100/A100 80GB, run experiment `text2world_7b_example_cosmos_nemo_assets_4gpu_80gb`.
+It trains with `cosmos_nemo_assets` data at 384x384 resolution, video length of 121 frames.
 
-Run the following command to execute an example post-training job with `cosmos_nemo_assets` data at 384x384 resolution.
 ```bash
-export OUTPUT_ROOT=checkpoints # default value
 torchrun --nproc_per_node=8 -m cosmos_predict1.diffusion.training.train \
     --config=cosmos_predict1/diffusion/training/config/config.py \
-    -- experiment=text2world_7b_example_cosmos_nemo_assets_lowres
+    -- experiment=text2world_7b_example_cosmos_nemo_assets_4gpu_80gb
 ```
 
-Here's an example running log on a single node (8 x H100 GPUs).
+To run with 8 GPUs with A100 40GB, run experiment `text2world_7b_example_cosmos_nemo_assets_8gpu_40gb`.
+It trains with `cosmos_nemo_assets` data at 384x384 resolution, video length of 33 frames.
+
 ```bash
-[04-03 09:41:50|INFO|cosmos_predict1/utils/trainer.py:144:train] Starting training...
-[04-03 09:43:11|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 20 : iter_speed 2.89 seconds per iteration | Loss: 2.3906
-[04-03 09:43:39|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 30 : iter_speed 2.76 seconds per iteration | Loss: 3.9688
-[04-03 09:44:07|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 40 : iter_speed 2.85 seconds per iteration | Loss: 2.3281
-[04-03 09:44:36|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 50 : iter_speed 2.84 seconds per iteration | Loss: 0.3906
-[04-03 09:45:04|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 60 : iter_speed 2.85 seconds per iteration | Loss: -0.3418
-[04-03 09:45:32|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 70 : iter_speed 2.78 seconds per iteration | Loss: -0.3086
-[04-03 09:46:00|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 80 : iter_speed 2.82 seconds per iteration | Loss: -1.1641
-[04-03 09:46:28|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 90 : iter_speed 2.80 seconds per iteration | Loss: 0.7461
-Training:   5%|████▋                                                                                                   | 91/2000 [04:40<1:31:22,  2.87s/it]
+torchrun --nproc_per_node=8 -m cosmos_predict1.diffusion.training.train \
+    --config=cosmos_predict1/diffusion/training/config/config.py \
+    -- experiment=text2world_7b_example_cosmos_nemo_assets_8gpu_40gb
+```
+
+To run with 4 GPUs with A100 40GB, run experiment `text2world_7b_example_cosmos_nemo_assets_4gpu_40gb`.
+It trains with `cosmos_nemo_assets` data at 384x384 resolution, video length of 17 frames.
+
+```bash
+torchrun --nproc_per_node=8 -m cosmos_predict1.diffusion.training.train \
+    --config=cosmos_predict1/diffusion/training/config/config.py \
+    -- experiment=text2world_7b_example_cosmos_nemo_assets_4gpu_40gb
 ```
 
 ##### Cosmos-Predict1-14B-Text2World
