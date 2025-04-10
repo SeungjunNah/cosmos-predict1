@@ -99,6 +99,10 @@ Here's an example running log on a single node (8 x H100 GPUs).
 Training:   5%|████▉                                                                                                   | 94/2000 [12:44<4:10:00,  7.87s/it]
 ```
 
+Example loss curve:  
+![Image](../assets/diffusion/loss_examples/text2world_7b_example_cosmos_nemo_assets.svg)
+
+
 Optionally, multi-node training can be done with
 ```bash
 # 4-node training example.
@@ -121,9 +125,6 @@ Here's an example running log on 4 nodes (8 x H100 GPUs x 4 nodes).
 [04-03 10:04:38|INFO|cosmos_predict1/diffusion/training/callbacks/iter_speed.py:80:every_n_impl] 90 : iter_speed 6.87 seconds per iteration | Loss: -0.4297
 Training:   5%|████▊                                                                                                   | 92/2000 [10:48<3:38:34,  6.87s/it]
 ```
-
-Example loss curve:  
-![Image](../assets/diffusion/loss_examples/text2world_7b_example_cosmos_nemo_assets.svg)
 
 The model will be post-trained using the above cosmos_nemo_assets dataset.
 See the config `text2world_7b_example_cosmos_nemo_assets` defined in `cosmos_predict1/diffusion/training/config/text2world/experiment.py` to understand how the dataloader is determined.
