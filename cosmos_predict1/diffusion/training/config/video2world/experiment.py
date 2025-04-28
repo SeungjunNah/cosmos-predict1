@@ -103,8 +103,8 @@ dataloader_train_cosmos_nemo_assets_4gpu_80gb = L(DataLoader)(
     pin_memory=True,
 )
 
-n_length_8gpu_40gb = 4
-num_frames_8gpu_40gb = 8 * n_length_8gpu_40gb + 1  # 33
+n_length_8gpu_40gb = 3
+num_frames_8gpu_40gb = 8 * n_length_8gpu_40gb + 1  # 25
 example_video_dataset_cosmos_nemo_assets_8gpu_40gb = L(Dataset)(
     dataset_dir="datasets/cosmos_nemo_assets",
     sequence_interval=1,
@@ -122,13 +122,13 @@ dataloader_train_cosmos_nemo_assets_8gpu_40gb = L(DataLoader)(
     pin_memory=True,
 )
 
-n_length_4gpu_40gb = 2
-num_frames_4gpu_40gb = 8 * n_length_4gpu_40gb + 1  # 17
+n_length_4gpu_40gb = 3
+num_frames_4gpu_40gb = 8 * n_length_4gpu_40gb + 1  # 25
 example_video_dataset_cosmos_nemo_assets_4gpu_40gb = L(Dataset)(
     dataset_dir="datasets/cosmos_nemo_assets",
     sequence_interval=1,
     num_frames=num_frames_4gpu_40gb,
-    video_size=(384, 384),  # a low-res example for lower VRAM utilization without considering aspect ratio.
+    video_size=(192, 192),  # a low-res example for lower VRAM utilization without considering aspect ratio.
     start_frame_interval=1,
 )
 
@@ -137,7 +137,7 @@ dataloader_train_cosmos_nemo_assets_4gpu_40gb = L(DataLoader)(
     sampler=L(get_sampler)(dataset=example_video_dataset_cosmos_nemo_assets_4gpu_40gb),
     batch_size=1,
     drop_last=True,
-    num_workers=8,
+    num_workers=0,
     pin_memory=True,
 )
 
@@ -668,8 +668,8 @@ video2world_7b_example_cosmos_nemo_assets_4gpu_40gb = LazyDict(
             latent_shape=[
                 16,  # Latent channel dim
                 16,  # Latent temporal dim
-                48,  # Latent height dim
-                48,  # Latent width dim
+                24,  # Latent height dim
+                24,  # Latent width dim
             ],
             loss_reduce="mean",
             ema=dict(
@@ -706,7 +706,7 @@ video2world_7b_example_cosmos_nemo_assets_4gpu_40gb = LazyDict(
             ),
             vae=dict(
                 pixel_chunk_duration=num_frames_4gpu_40gb,
-                spatial_resolution="384",
+                spatial_resolution="192",
             ),
         ),
         model_obj=L(FSDPExtendDiffusionModel)(
